@@ -7,15 +7,11 @@ import { fileURLToPath } from "url";
 import serverRouter from "./routes/server.route.js";
 import http from "http";
 import { Server } from "socket.io";
-import { playerHandle, hostHandle } from "./controllers/socketHandle/index.js";
-import GameManager from "./utils/class/GameManager.js";
-import Game from "./utils/class/game.js";
-
-const exampleGame1 = new Game("2000");
-const exampleGame2 = new Game("1000");
-const gameManager = new GameManager();
-gameManager.addGame(exampleGame1);
-gameManager.addGame(exampleGame2);
+import {
+  playerHandle,
+  hostHandle,
+  disconnectHandle,
+} from "./controllers/socketHandle/index.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -47,55 +43,9 @@ io.on("connection", (socket) => {
   console.log(`user ${socket.id} connect to socket server`);
 
   // Binding
-  playerHandle(io, socket, gameManager);
-  hostHandle(io, socket, gameManager);
-
-  // Player disconnect
-  socket.on("disconnect", async () => {
-    const id = socket.id;
-    const room = socket?.player?.room ?? socket?.host?.room;
-    const isHost = socket.host;
-
-    console.log(isHost);
-    if (room) {
-      const game = gameManager.getGame(room);
-      if (game) {
-        // If user is host
-        if (isHost) {
-          gameManager.removeGame(game);
-
-          io.to(room).emit("hostDisconnect");
-
-          // Kick all client out of the room
-          const clients = await io.in(room).fetchSockets();
-          clients.forEach((client) => {
-            client.leave(room);
-
-            // Reset client socket
-            client.player = {};
-          });
-          console.log(`Host of room ${room} has disconnected`);
-        }
-        // If user is normal player
-        else {
-          // Remove player from game
-
-          game.removePlayer(id);
-          console.log(`Player ${socket.player.name} has disconnected`);
-
-          // Notify host new player list
-
-          const playersInRoom = game.getPlayersInGame();
-          const host = socket?.player?.host;
-          io.to(host).emit("receive__players", playersInRoom);
-        }
-      }
-    }
-    // If user is not player or host
-    else {
-      console.log(`user ${id} has disconneted`);
-    }
-  });
+  playerHandle(io, socket);
+  hostHandle(io, socket);
+  disconnectHandle(io, socket);
 });
 
 server.listen(port, () => {

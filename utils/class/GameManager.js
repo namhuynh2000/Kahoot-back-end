@@ -22,8 +22,9 @@ class GameManager {
   }
 
   removeGame(game) {
-    this.gameList = this.gameList.filter((item) => item.id !== game.id);
+    this.gameList = this.gameList.filter((item) => item.roomId !== game.roomId);
   }
 }
 
-export default GameManager;
+const gameManager = new GameManager();
+export default gameManager;
