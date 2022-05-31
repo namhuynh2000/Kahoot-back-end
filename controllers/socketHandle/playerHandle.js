@@ -8,6 +8,7 @@ const playerHandle = (io, socket, gameManager) => {
         id: socket.id,
         room,
         name: payload.name,
+        score: 0,
       };
       game.addPlayerToGame(player);
 
@@ -20,6 +21,7 @@ const playerHandle = (io, socket, gameManager) => {
       io.to(socket.id).emit("joinRoomRes", {
         result: true,
         msg: "Joined successfully",
+        player,
       });
 
       sendAllPlayersInfoInRoom(room);

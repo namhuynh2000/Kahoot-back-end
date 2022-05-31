@@ -6,9 +6,9 @@ class GameManager {
       Math.floor(Math.random() * (999 - 100 + 1) + 100).toString();
   }
 
-  getGame(id) {
+  getGame(roomId) {
     return this.gameList.find((game) => {
-      return game.id === id;
+      return game.roomId === roomId;
     });
   }
   addGame(game) {

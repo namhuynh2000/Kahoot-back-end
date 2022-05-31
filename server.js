@@ -51,32 +51,44 @@ io.on("connection", (socket) => {
   hostHandle(io, socket, gameManager);
 
   // Player disconnect
-  socket.on("disconnect", () => {
+  socket.on("disconnect", async () => {
     const id = socket.id;
     const room = socket?.player?.room ?? socket?.host?.room;
     const isHost = socket.host;
 
+    console.log(isHost);
     if (room) {
       const game = gameManager.getGame(room);
-      // If user is host
-      if (isHost) {
-        gameManager.removeGame(game);
-        io.to(room).emit("hostDisconnect");
-        console.log(`Host of room ${room} has disconnected`);
-      }
-      // If user is normal player
-      else {
-        // Remove player from game
+      if (game) {
+        // If user is host
+        if (isHost) {
+          gameManager.removeGame(game);
 
-        game.removePlayer(id);
-        console.log(`Player ${socket.player.name} has disconnected`);
+          io.to(room).emit("hostDisconnect");
 
-        // Notify host new player list
+          // Kick all client out of the room
+          const clients = await io.in(room).fetchSockets();
+          clients.forEach((client) => {
+            client.leave(room);
 
-        const playersInRoom = game.getPlayersInGame();
-        const host = socket?.player?.host;
-        console.log(host);
-        io.to(host).emit("receive__players", playersInRoom);
+            // Reset client socket
+            client.player = {};
+          });
+          console.log(`Host of room ${room} has disconnected`);
+        }
+        // If user is normal player
+        else {
+          // Remove player from game
+
+          game.removePlayer(id);
+          console.log(`Player ${socket.player.name} has disconnected`);
+
+          // Notify host new player list
+
+          const playersInRoom = game.getPlayersInGame();
+          const host = socket?.player?.host;
+          io.to(host).emit("receive__players", playersInRoom);
+        }
       }
     }
     // If user is not player or host

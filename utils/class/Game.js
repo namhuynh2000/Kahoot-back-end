@@ -1,9 +1,10 @@
 class Game {
-  constructor(id, hostID) {
-    this.id = id || "";
+  constructor(roomId, hostID, quizId) {
+    this.roomId = roomId || "";
     this.playerList = [];
     this.host = hostID || "";
     this.start = false;
+    this.quizId = quizId || "";
   }
 
   addPlayerToGame(player) {

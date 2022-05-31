@@ -14,7 +14,7 @@ const hostHandle = (io, socket, gameManager) => {
 
     if (game) {
       const room = gameManager.getNextAvailableId();
-      const newGame = new Game(room, socket.id);
+      const newGame = new Game(room, socket.id, id);
 
       socket.host = { id: socket.id, room };
       gameManager.addGame(newGame);
