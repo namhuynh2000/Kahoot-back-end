@@ -4,8 +4,6 @@ const playerHandle = (io, socket) => {
   const joinRoom = async (payload) => {
     const room = payload.room;
 
-    console.log(gameManager.gameList);
-
     const game = gameManager.getGame(room);
     if (game) {
       const player = {
