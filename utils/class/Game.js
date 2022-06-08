@@ -57,14 +57,17 @@ class Game {
       const questionAnswer = this.answers.find((ans) => ans.id === questionId);
       console.log("player:", answer);
       console.log("correct:", question.correctAnswer);
+      //  Update number of player has answer the question
+      this.answers.forEach((ans) => {
+        ans.playerAnswers.push({ player: playerId, answer });
+      });
+
+      // Check if player answer right
       if (question.correctAnswer === answer) {
         const index = questionAnswer.playerAnswers.length;
         const newScore = 1000 - index * 20;
 
-        //  Update number of player has answer the question
-        this.answers.forEach((ans) => {
-          ans.playerAnswers.push({ player: playerId, answer });
-        });
+
 
         //  Update player score
         this.playerList.forEach((player) => {
@@ -74,9 +77,12 @@ class Game {
           }
         });
       }
-      return this.answers;
     }
+
+    return this.getAnswer(questionId);
   }
 }
+
+
 
 export default Game;
