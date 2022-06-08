@@ -11,6 +11,12 @@ class GameManager {
       return game.roomId === roomId;
     });
   }
+
+  getGameWithPlayer(playerId) {
+    return this.gameList.find((game) => {
+      return game.havePlayer(playerId);
+    });
+  }
   addGame(game) {
     this.gameList.push(game);
   }

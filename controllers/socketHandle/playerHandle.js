@@ -1,4 +1,5 @@
-import gameManager from "../../utils/class/GameManager.js";
+import gameManager from '../../utils/class/GameManager.js';
+import {hostHandle} from "./index.js";
 
 const playerHandle = (io, socket) => {
   const joinRoom = async (payload) => {
@@ -43,6 +44,24 @@ const playerHandle = (io, socket) => {
     }
   };
 
+  const answer = (playerId, questionId, answerContent) => {
+    const game = gameManager.getGameWithPlayer(playerId);
+    if (game) {
+      const newList = game.updatePlayerAnswer(
+        playerId,
+        questionId,
+        answerContent
+      );
+
+      const playerInfo = game.getPlayer(playerId);
+      console.log(playerInfo);
+      io.to(game.host).emit("playerAnswerRes", newList);
+      io.to(socket.id).emit("updatePlayerInfo",playerInfo);
+    }
+  };
+
+
   socket.on("joinRoom", joinRoom);
+  socket.on("playerAnswer", answer);
 };
 export default playerHandle;

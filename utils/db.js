@@ -4,7 +4,7 @@ const dbGame = [
     id: "12345",
     questions: [
       {
-        id: 1,
+        id: "1",
         content: "1 + 1 = ?",
         choices: [
           {
