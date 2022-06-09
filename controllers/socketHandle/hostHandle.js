@@ -1,6 +1,6 @@
-import { getAllQuizFromDB, getGameFromDB } from '../../models/server.model.js';
-import Game from '../../utils/class/game.js';
-import gameManager from '../../utils/class/GameManager.js';
+import { getAllQuizFromDB, getGameFromDB } from "../../models/server.model.js";
+import Game from "../../utils/class/game.js";
+import gameManager from "../../utils/class/GameManager.js";
 
 const hostHandle = (io, socket) => {
   const fetchQuizList = async () => {
@@ -79,7 +79,7 @@ const hostHandle = (io, socket) => {
       const questionData = game.getQuestion(questionIndex);
 
       if (questionData) {
-        io.to(room).emit("getQuestionRes", { questionData,result: true });
+        io.to(room).emit("getQuestionRes", { questionData, result: true });
       } else {
         // Notify all player and the host if get question failed
         io.to(room).emit("getQuestionRes", { result: false });
@@ -92,23 +92,21 @@ const hostHandle = (io, socket) => {
     io.to(socket.id).emit("getQuestionRes", { result: false });
   };
 
-  const stopQuestion = (room,questionId)=>{
-    const game =gameManager.getGame(room)
-    console.log(room,questionId);
-    if(game)
-    {
+  const stopQuestion = (room, questionId) => {
+    const game = gameManager.getGame(room);
+    console.log(room, questionId);
+    if (game) {
       const ansList = game.getAnswer(questionId);
-      io.to(room).emit("questionTimeOut",ansList);
+      io.to(room).emit("questionTimeOut");
     }
-  }
-
+  };
 
   socket.on("hostGame", hostGame);
   socket.on("fetchQuizList", fetchQuizList);
   socket.on("fetchPlayersInRoom", sendAllPlayersInfoInRoom);
   socket.on("startGame", startGame);
   socket.on("getQuestion", getQuestion);
-  socket.on("stopQuestion",stopQuestion);
+  socket.on("stopQuestion", stopQuestion);
 };
 
 export default hostHandle;

@@ -1,5 +1,5 @@
-import gameManager from '../../utils/class/GameManager.js';
-import {hostHandle} from "./index.js";
+import gameManager from "../../utils/class/GameManager.js";
+import { hostHandle } from "./index.js";
 
 const playerHandle = (io, socket) => {
   const joinRoom = async (payload) => {
@@ -56,10 +56,15 @@ const playerHandle = (io, socket) => {
       const playerInfo = game.getPlayer(playerId);
       console.log(playerInfo);
       io.to(game.host).emit("playerAnswerRes", newList);
-      io.to(socket.id).emit("updatePlayerInfo",playerInfo);
+      io.to(socket.id).emit("updatePlayerInfo", playerInfo);
+
+      if (game.getPlayersInGame().length === newList.playerAnswers.length) {
+        console.log("All player answered the question");
+        console.log(game);
+        io.to(game.roomId).emit("questionTimeOut");
+      }
     }
   };
-
 
   socket.on("joinRoom", joinRoom);
   socket.on("playerAnswer", answer);
