@@ -8,7 +8,7 @@ class GameManager {
 
   getGame(roomId) {
     return this.gameList.find((game) => {
-      return game.roomId === roomId;
+      return game.room === roomId;
     });
   }
 

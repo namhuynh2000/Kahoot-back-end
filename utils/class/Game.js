@@ -1,28 +1,31 @@
 class Game {
-  constructor(roomId, hostID, data) {
-    this.roomId = roomId || "";
+  constructor(room, hostID, data) {
+    this.room = room || "";
     this.playerList = [];
     this.host = hostID || "";
     this.start = false;
     this.data = data;
+    this.currentQuestionIndex = 0;
     this.answers = this.data.questions.map((ques) => {
       const id = ques.id;
       return { id, playerAnswers: [] };
     });
   }
 
-  getPlayer(playerId)
-  {
-    return this.playerList.find(player=>player.id === playerId);
-  }
-  getQuestion(id) {
-    console.log(id);
-    return this.data.questions.find(ques=>ques.id === id);
+  increaseQuestionIndex() {
+    ++this.currentQuestionIndex;
   }
 
-  getAnswer(id)
-  {
-    return this.answers.find(ans => ans.id === id);
+  getPlayer(playerId) {
+    return this.playerList.find((player) => player.id === playerId);
+  }
+
+  getQuestion() {
+    return this.data.questions[this.currentQuestionIndex];
+  }
+
+  getAnswer() {
+    return this.answers[this.currentQuestionIndex];
   }
 
   addPlayerToGame(player) {
@@ -59,15 +62,14 @@ class Game {
       console.log("correct:", question.correctAnswer);
       //  Update number of player has answer the question
       this.answers.forEach((ans) => {
-        ans.playerAnswers.push({ player: playerId, answer });
+        if (ans.id === questionId)
+          ans.playerAnswers.push({ player: playerId, answer });
       });
 
       // Check if player answer right
       if (question.correctAnswer === answer) {
         const index = questionAnswer.playerAnswers.length;
-        const newScore = 1000 - index * 20;
-
-
+        const newScore = 1000 - (index - 1) * 20;
 
         //  Update player score
         this.playerList.forEach((player) => {
@@ -82,7 +84,5 @@ class Game {
     return this.getAnswer(questionId);
   }
 }
-
-
 
 export default Game;

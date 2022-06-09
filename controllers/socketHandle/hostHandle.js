@@ -10,6 +10,7 @@ const hostHandle = (io, socket) => {
 
   const createGame = () => {};
 
+  // Host game
   const hostGame = (id) => {
     // Load game from database
     const game = getGameFromDB(id);
@@ -43,6 +44,7 @@ const hostHandle = (io, socket) => {
     }
   };
 
+  // Start game
   const startGame = (room) => {
     const game = gameManager.getGame(room);
     if (game) {
@@ -52,17 +54,17 @@ const hostHandle = (io, socket) => {
       io.to(room).emit("hostStartingGame");
 
       //Count down starting event for host
-      let counting = 3;
-      const interval = setInterval(() => {
-        if (counting === 0) {
-          game.startGame();
+      // let counting = 3;
+      // const interval = setInterval(() => {
+      //   if (counting === 0) {
+      //     game.startGame();
 
-          // Notify all player and the host if start success
-          io.to(room).emit("startGameRes", { result: true });
-          clearInterval(interval);
-        }
-        io.to(socket.id).emit("startGameCountDown", counting--);
-      }, 1000);
+      //     // Notify all player and the host if start success
+      //     io.to(room).emit("startGameRes", { result: true });
+      //     clearInterval(interval);
+      //   }
+      //   io.to(socket.id).emit("startGameCountDown", counting--);
+      // }, 1000);
 
       return;
     }
@@ -72,11 +74,13 @@ const hostHandle = (io, socket) => {
     io.to(socket.id).emit("startGameRes", { result: false });
   };
 
-  const getQuestion = (room, questionIndex) => {
+  // Get question
+  const getQuestion = (room) => {
     const game = gameManager.getGame(room);
 
+    console.log("game:", game);
     if (game) {
-      const questionData = game.getQuestion(questionIndex);
+      const questionData = game.getQuestion();
 
       if (questionData) {
         io.to(room).emit("getQuestionRes", { questionData, result: true });
@@ -92,13 +96,39 @@ const hostHandle = (io, socket) => {
     io.to(socket.id).emit("getQuestionRes", { result: false });
   };
 
-  const stopQuestion = (room, questionId) => {
+  const stopQuestion = (room) => {
     const game = gameManager.getGame(room);
-    console.log(room, questionId);
     if (game) {
-      const ansList = game.getAnswer(questionId);
       io.to(room).emit("questionTimeOut");
     }
+  };
+
+  const nextQuestion = (room) => {
+    const game = gameManager.getGame(room);
+
+    if (game) {
+      game.increaseQuestionIndex();
+
+      if (game.currentQuestionIndex >= game.data.questions.length) {
+        io.to(room).emit("nextQuestionRes", { result: false });
+        return;
+      }
+      io.to(room).emit("nextQuestionRes", { result: true });
+    }
+  };
+
+  const getRankList = (room) => {
+    const game = gameManager.getGame(room);
+
+    if (game) {
+      const ansList = [...game.getPlayersInGame()];
+      const rankList = ansList.sort((a, b) => b.score - a.score);
+      console.log(rankList);
+      io.to(room).emit("getRankListRes", { result: true, rankList });
+      return;
+    }
+    io.to(room).emit("getRankListRes", { result: false });
+    io.to(socket.id).emit("getRankListRes", { result: false });
   };
 
   socket.on("hostGame", hostGame);
@@ -107,6 +137,8 @@ const hostHandle = (io, socket) => {
   socket.on("startGame", startGame);
   socket.on("getQuestion", getQuestion);
   socket.on("stopQuestion", stopQuestion);
+  socket.on("nextQuestion", nextQuestion);
+  socket.on("getRankList", getRankList);
 };
 
 export default hostHandle;

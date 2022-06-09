@@ -54,14 +54,15 @@ const playerHandle = (io, socket) => {
       );
 
       const playerInfo = game.getPlayer(playerId);
-      console.log(playerInfo);
       io.to(game.host).emit("playerAnswerRes", newList);
       io.to(socket.id).emit("updatePlayerInfo", playerInfo);
 
+      console.log("Players in room: ", game.getPlayersInGame().length);
+      console.log("Player answer: ", newList.playerAnswers.length);
+
       if (game.getPlayersInGame().length === newList.playerAnswers.length) {
         console.log("All player answered the question");
-        console.log(game);
-        io.to(game.roomId).emit("questionTimeOut");
+        io.to(game.room).emit("questionTimeOut");
       }
     }
   };

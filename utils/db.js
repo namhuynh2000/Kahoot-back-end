@@ -1,6 +1,5 @@
 const dbGame = [
   {
-    
     id: "12345",
     questions: [
       {
@@ -22,6 +21,27 @@ const dbGame = [
         ],
 
         correctAnswer: "2",
+      },
+
+      {
+        id: "2",
+        content: "2 + 2 = ?",
+        choices: [
+          {
+            content: "1",
+          },
+          {
+            content: "5",
+          },
+          {
+            content: "4",
+          },
+          {
+            content: "0",
+          },
+        ],
+
+        correctAnswer: "4",
       },
     ],
     name: "Math",
