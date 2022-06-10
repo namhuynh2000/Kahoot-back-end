@@ -45,6 +45,7 @@ const dbGame = [
       },
     ],
     name: "Math",
+    createdUserId: "123456",
   },
 ];
 

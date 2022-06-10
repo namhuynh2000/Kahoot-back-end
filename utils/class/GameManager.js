@@ -6,6 +6,12 @@ class GameManager {
       Math.floor(Math.random() * (999 - 100 + 1) + 100).toString();
   }
 
+  getGameWithHost(hostId) {
+    return this.gameList.find((game) => {
+      return game.host === hostId;
+    });
+  }
+
   getGame(roomId) {
     return this.gameList.find((game) => {
       return game.room === roomId;

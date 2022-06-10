@@ -74,10 +74,19 @@ class Game {
         //  Update player score
         this.playerList.forEach((player) => {
           if (player.id === playerId) {
-            console.log(newScore);
             player.score += newScore;
           }
         });
+
+        // Sort
+        this.playerList.sort((a, b) => b.score - a.score);
+
+        // // Update player rank
+        // this.playerList.forEach((player, index) => {
+        //   if (player.id === playerId) {
+        //     player.rank = index + 1;
+        //   }
+        // });
       }
     }
 
