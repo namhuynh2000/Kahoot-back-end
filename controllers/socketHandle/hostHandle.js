@@ -1,19 +1,19 @@
-import { getAllQuizFromDB, getGameFromDB } from "../../models/server.model.js";
 import Game from "../../utils/class/game.js";
 import gameManager from "../../utils/class/GameManager.js";
+import { getAllQuizFromDB, getGameFromDB } from "../../models/server.model.js";
 
 const hostHandle = (io, socket) => {
   const fetchQuizList = async () => {
-    const list = getAllQuizFromDB();
+    const list = await getAllQuizFromDB();
     io.to(socket.id).emit("fetchQuizListRes", list);
   };
 
   const createGame = () => {};
 
   // Host game
-  const hostGame = (id) => {
+  const hostGame = async (id) => {
     // Load game from database
-    const game = getGameFromDB(id);
+    const game = await getGameFromDB(id);
 
     if (game) {
       const room = gameManager.getNextAvailableId();

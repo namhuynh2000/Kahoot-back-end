@@ -1,9 +1,12 @@
-import dbGame, { getGame, getAllQuiz } from "../utils/db.js";
+import { quizModel } from "../utils/db.js";
 
-export const getGameFromDB = (id) => {
-  return getGame(id);
+console.log(quizModel);
+export const getGameFromDB = async (id) => {
+  const result = await quizModel.findById(id);
+  return result;
 };
 
-export const getAllQuizFromDB = () => {
-  return getAllQuiz();
+export const getAllQuizFromDB = async () => {
+  const result = await quizModel.find({});
+  return result;
 };

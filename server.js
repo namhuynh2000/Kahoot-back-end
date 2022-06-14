@@ -7,12 +7,12 @@ import { fileURLToPath } from "url";
 import serverRouter from "./routes/server.route.js";
 import http from "http";
 import { Server } from "socket.io";
+import { checkConnect } from "./utils/db.js";
 import {
   playerHandle,
   hostHandle,
   disconnectHandle,
 } from "./controllers/socketHandle/index.js";
-
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -41,13 +41,29 @@ app.get("/", (req, res) => {
 
 io.on("connection", (socket) => {
   console.log(`user ${socket.id} connect to socket server`);
-
   // Binding
   playerHandle(io, socket);
   hostHandle(io, socket);
   disconnectHandle(io, socket);
 });
 
-server.listen(port, () => {
-  console.log(`socket is listening on: ${port}`);
-});
+// main()
+//   .then((message) => {
+//     console.log(message);
+
+//     server.listen(port, () => {
+//       console.log(`socket is listening on: ${port}`);
+//     });
+//   })
+//   .catch((e) => {
+//     console.log(console.log(e));
+//     server.close();
+//   });
+
+if (checkConnect) {
+  server.listen(port, () => {
+    console.log(`socket is listening on: ${port}`);
+  });
+} else {
+  server.close();
+}

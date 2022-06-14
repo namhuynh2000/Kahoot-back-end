@@ -4,6 +4,7 @@ class Game {
     this.playerList = [];
     this.host = hostID || "";
     this.start = false;
+    console.log(data);
     this.data = data;
     this.currentQuestionIndex = 0;
     this.answers = this.data.questions.map((ques) => {
@@ -22,7 +23,7 @@ class Game {
 
   getQuestion() {
     return {
-      ...this.data.questions[this.currentQuestionIndex],
+      questionData: this.data.questions[this.currentQuestionIndex],
       questionIndex: this.currentQuestionIndex,
       questionLength: this.data.questions.length,
     };
@@ -62,8 +63,10 @@ class Game {
   }
 
   updatePlayerAnswer(playerId, questionId, answer) {
-    const question = this.data.questions.find((ques) => ques.id === questionId);
-
+    const question = this.data.questions.find((ques) => {
+      return ques.id === questionId;
+    });
+    console.log(questionId);
     if (question) {
       const questionAnswer = this.answers.find((ans) => ans.id === questionId);
       console.log("player:", answer);
@@ -88,17 +91,10 @@ class Game {
 
         // Sort
         this.playerList.sort((a, b) => b.score - a.score);
-
-        // // Update player rank
-        // this.playerList.forEach((player, index) => {
-        //   if (player.id === playerId) {
-        //     player.rank = index + 1;
-        //   }
-        // });
       }
     }
 
-    return this.getAnswer(questionId);
+    return this.getAnswer();
   }
 }
 
