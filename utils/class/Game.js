@@ -21,7 +21,11 @@ class Game {
   }
 
   getQuestion() {
-    return this.data.questions[this.currentQuestionIndex];
+    return {
+      ...this.data.questions[this.currentQuestionIndex],
+      questionIndex: this.currentQuestionIndex,
+      questionLength: this.data.questions.length,
+    };
   }
 
   getAnswer() {
@@ -51,6 +55,10 @@ class Game {
   startGame() {
     this.start = true;
     return this.start;
+  }
+
+  getQuizName() {
+    return this.data.name;
   }
 
   updatePlayerAnswer(playerId, questionId, answer) {

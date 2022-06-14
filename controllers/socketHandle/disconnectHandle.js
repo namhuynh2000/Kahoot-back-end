@@ -42,7 +42,7 @@ const disconnectHandle = (io, socket) => {
     }
     // If user is not player or host
     else {
-      console.log(`user ${id} has disconneted`);
+      console.log(`user ${id} has disconnected`);
     }
   });
 };

@@ -36,8 +36,8 @@ const hostHandle = (io, socket) => {
     }
   };
 
-  const sendAllPlayersInfoInRoom = (room) => {
-    const game = gameManager.getGame(room);
+  const sendAllPlayersInfoInRoom = () => {
+    const game = gameManager.getGameWithHost(socket.id);
     if (game) {
       const playersInRoom = game.getPlayersInGame();
       io.to(socket.id).emit("receive__players", playersInRoom);
@@ -45,55 +45,33 @@ const hostHandle = (io, socket) => {
   };
 
   // Start game
-  const startGame = (room) => {
-    const game = gameManager.getGame(room);
+  const startGame = () => {
+    const game = gameManager.getGameWithHost(socket.id);
     if (game) {
-      //Starting game
-
-      //Notify for all player that the host is starting the game
-      io.to(room).emit("hostStartingGame");
-
-      //Count down starting event for host
-      // let counting = 3;
-      // const interval = setInterval(() => {
-      //   if (counting === 0) {
-      //     game.startGame();
-
-      //     // Notify all player and the host if start success
-      //     io.to(room).emit("startGameRes", { result: true });
-      //     clearInterval(interval);
-      //   }
-      //   io.to(socket.id).emit("startGameCountDown", counting--);
-      // }, 1000);
-
+      io.to(socket.host.room).emit("hostStartingGame");
       return;
     }
-
-    //Notify  all player and the host if start failed
-    // io.to(room).emit("startGameRes", { result: false });
     io.to(socket.id).emit("startGameRes", { result: false });
   };
 
   // Get question
-  const getQuestion = (room, startTime) => {
-    const game = gameManager.getGame(room);
+  const getQuestion = (startTime) => {
+    const game = gameManager.getGameWithHost(socket.id);
 
-    console.log("game:", game);
     if (game) {
       const questionData = game.getQuestion();
-
       if (questionData) {
         io.to(socket.id).emit("getQuestionRes", { questionData, result: true });
 
         setTimeout(() => {
-          io.to(room).emit("hostGetQuestionRes", {
+          io.to(socket.host.room).emit("hostGetQuestionRes", {
             questionData,
             result: true,
           });
         }, startTime * 1000);
       } else {
         // Notify all player and the host if get question failed
-        io.to(room).emit("getQuestionRes", { result: false });
+        io.to(socket.host.room).emit("hostGetQuestionRes", { result: false });
         io.to(socket.id).emit("getQuestionRes", { result: false });
       }
       return;
@@ -101,53 +79,61 @@ const hostHandle = (io, socket) => {
     // Notify all player and the host if get question failed
     // io.to(room).emit("getQuestionRes", { result: false });
     io.to(socket.id).emit("getQuestionRes", { result: false });
+    io.to(socket.host.room).emit("hostGetQuestionRes", {
+      result: false,
+    });
   };
 
-  const stopQuestion = (room) => {
-    const game = gameManager.getGame(room);
+  const stopQuestion = () => {
+    const game = gameManager.getGameWithHost(socket.id);
     if (game) {
-      io.to(room).emit("questionTimeOut");
+      io.to(socket.host.room).emit("questionTimeOut");
     }
   };
 
-  const nextQuestion = (room) => {
-    const game = gameManager.getGame(room);
+  const nextQuestion = () => {
+    const game = gameManager.getGameWithHost(socket.id);
 
     if (game) {
       game.increaseQuestionIndex();
 
       if (game.currentQuestionIndex >= game.data.questions.length) {
-        io.to(room).emit("nextQuestionRes", { result: false });
+        io.to(socket.host.room).emit("nextQuestionRes", { result: false });
         return;
       }
-      io.to(room).emit("nextQuestionRes", { result: true });
+      io.to(socket.host.room).emit("nextQuestionRes", { result: true });
     }
   };
 
-  const getRankList = (room) => {
-    const game = gameManager.getGame(room);
+  const getRankList = () => {
+    const game = gameManager.getGameWithHost(socket.id);
 
     if (game) {
       const rankList = game.getPlayersInGame().slice(0, 10);
 
-      io.to(room).emit("getRankListRes", { result: true, rankList });
+      io.to(socket.host.room).emit("getRankListRes", {
+        result: true,
+        rankList,
+      });
       return;
     }
-    io.to(room).emit("getRankListRes", { result: false });
+    io.to(socket.host.room).emit("getRankListRes", { result: false });
     io.to(socket.id).emit("getRankListRes", { result: false });
   };
 
-  const getSummaryRankList = (room, loadingTime) => {
-    const game = gameManager.getGame(room);
+  const getSummaryRankList = (loadingTime) => {
+    const game = gameManager.getGameWithHost(socket.id);
 
-    console.log(loadingTime);
     if (game) {
       const rankList = game.getPlayersInGame();
-
-      io.to(socket.id).emit("getSummaryRankListRes", rankList);
+      const gameName = game.getQuizName();
+      io.to(socket.id).emit("getSummaryRankListRes", {
+        rankList,
+        gameName,
+      });
 
       setTimeout(() => {
-        io.to(room).emit("playerRank", rankList);
+        io.to(socket.host.room).emit("playerRank", { rankList, gameName });
       }, loadingTime * 1000);
     }
   };
