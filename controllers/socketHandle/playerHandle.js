@@ -67,7 +67,16 @@ const playerHandle = (io, socket) => {
     }
   };
 
+  const playerDisconnect = () => {
+    const game = gameManager.getGameWithPlayer(socket.id);
+    if (game) {
+      game.removePlayer(socket.id);
+      sendAllPlayersInfoInRoom(game.room);
+    }
+  };
+
   socket.on("joinRoom", joinRoom);
   socket.on("playerAnswer", answer);
+  socket.on("disconnect", playerDisconnect);
 };
 export default playerHandle;

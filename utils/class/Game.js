@@ -4,7 +4,6 @@ class Game {
     this.playerList = [];
     this.host = hostID || "";
     this.start = false;
-    console.log(data);
     this.data = data;
     this.currentQuestionIndex = 0;
     this.answers = this.data.questions.map((ques) => {

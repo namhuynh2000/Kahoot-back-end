@@ -11,32 +11,32 @@ const disconnectHandle = (io, socket) => {
       if (game) {
         // If user is host
         if (isHost) {
-          gameManager.removeGame(game);
+          // gameManager.removeGame(game);
 
-          io.to(room).emit("hostDisconnect");
+          // io.to(room).emit("hostDisconnect");
 
-          // Kick all client out of the room
-          const clients = await io.in(room).fetchSockets();
-          clients.forEach((client) => {
-            client.leave(room);
+          // // Kick all client out of the room
+          // const clients = await io.in(room).fetchSockets();
+          // clients.forEach((client) => {
+          //   client.leave(room);
 
-            // Reset client socket
-            client.player = {};
-          });
+          //   // Reset client socket
+          //   client.player = {};
+          // });
           console.log(`Host of room ${room} has disconnected`);
         }
         // If user is normal player
         else {
-          // Remove player from game
+          // // Remove player from game
 
-          game.removePlayer(id);
+          // game.removePlayer(id);
           console.log(`Player ${socket.player.name} has disconnected`);
 
-          // Notify host new player list
+          // // Notify host new player list
 
-          const playersInRoom = game.getPlayersInGame();
-          const host = socket?.player?.host;
-          io.to(host).emit("receive__players", playersInRoom);
+          // const playersInRoom = game.getPlayersInGame();
+          // const host = socket?.player?.host;
+          // io.to(host).emit("receive__players", playersInRoom);
         }
       }
     }

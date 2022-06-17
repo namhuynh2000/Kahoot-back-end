@@ -4,6 +4,11 @@ import { getAllQuizFromDB, getGameFromDB } from "../../models/server.model.js";
 
 const hostHandle = (io, socket) => {
   const fetchQuizList = async () => {
+    console.log(gameManager.gameList);
+    if (socket.host) {
+      gameManager.removeGame(socket.host.room);
+    }
+
     const list = await getAllQuizFromDB();
     io.to(socket.id).emit("fetchQuizListRes", list);
   };
@@ -138,6 +143,15 @@ const hostHandle = (io, socket) => {
     }
   };
 
+  const hostDisconnect = () => {
+    const game = gameManager.getGameWithHost(socket.id);
+    if (game) {
+      gameManager.removeGame(game.room);
+      io.to(socket.host.room).emit("hostDisconnect");
+      // console.log(`Host of room ${room} has disconnected`);
+    }
+  };
+
   socket.on("hostGame", hostGame);
   socket.on("fetchQuizList", fetchQuizList);
   socket.on("fetchPlayersInRoom", sendAllPlayersInfoInRoom);
@@ -147,6 +161,7 @@ const hostHandle = (io, socket) => {
   socket.on("nextQuestion", nextQuestion);
   socket.on("getRankList", getRankList);
   socket.on("getSummaryRankList", getSummaryRankList);
+  socket.on("disconnect", hostDisconnect);
 };
 
 export default hostHandle;
