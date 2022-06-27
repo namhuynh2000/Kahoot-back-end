@@ -83,7 +83,8 @@ const hostHandle = (io, socket) => {
         }, startTime * 1000);
       } else {
         // Notify all player and the host if get question failed
-        io.to(socket.host.room).emit("hostGetQuestionRes", { result: false });
+        if (socket?.host?.room)
+          io.to(socket.host.room).emit("hostGetQuestionRes", { result: false });
         io.to(socket.id).emit("getQuestionRes", { result: false });
       }
       return;
