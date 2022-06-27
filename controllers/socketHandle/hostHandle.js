@@ -1,28 +1,35 @@
 import Game from "../../utils/class/game.js";
 import gameManager from "../../utils/class/GameManager.js";
-import { getAllQuizFromDB, getGameFromDB } from "../../models/server.model.js";
+import quizModel from "../../models/server.model.js";
 
 const hostHandle = (io, socket) => {
-  const fetchQuizList = async () => {
-    console.log(gameManager.gameList);
+  const fetchQuizList = async (userId) => {
+    console.log(userId);
     if (socket.host) {
       gameManager.removeGame(socket.host.room);
     }
 
-    const list = await getAllQuizFromDB();
+    const list = await quizModel.getUserQuizFromDB(userId);
     io.to(socket.id).emit("fetchQuizListRes", list);
   };
 
-  const createGame = () => {};
+  const createGame = async (data) => {
+    console.log(data);
+    const result = await quizModel.addQuizToDB(data);
+
+    if (result)
+      io.to(socket.id).emit("createGameResult", { message: "success" });
+    else io.to(socket.id).emit("createGameResult", { message: "error" });
+  };
 
   // Host game
   const hostGame = async (id) => {
-    // Load game from database
-    const game = await getGameFromDB(id);
+    // Load data from database
+    const data = await quizModel.getGameFromDB(id);
 
-    if (game) {
+    if (data) {
       const room = gameManager.getNextAvailableId();
-      const newGame = new Game(room, socket.id, game);
+      const newGame = new Game(room, socket.id, data);
 
       socket.join(room);
       socket.host = { id: socket.id, room };
@@ -153,6 +160,7 @@ const hostHandle = (io, socket) => {
   };
 
   socket.on("hostGame", hostGame);
+  socket.on("createGame", createGame);
   socket.on("fetchQuizList", fetchQuizList);
   socket.on("fetchPlayersInRoom", sendAllPlayersInfoInRoom);
   socket.on("startGame", startGame);

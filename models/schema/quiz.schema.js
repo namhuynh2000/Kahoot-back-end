@@ -10,10 +10,12 @@ const quizSchema = new mongoose.Schema({
         },
       ],
       correctAnswer: String,
+      imgPath: String,
     },
   ],
   name: String,
-  createdUserId: String,
+  userId: String,
+  imgPath: String,
 });
 
 export const quizModel = mongoose.model("kahoot", quizSchema, "quiz");
