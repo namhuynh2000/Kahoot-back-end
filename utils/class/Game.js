@@ -25,6 +25,7 @@ class Game {
       questionData: this.data.questions[this.currentQuestionIndex],
       questionIndex: this.currentQuestionIndex,
       questionLength: this.data.questions.length,
+      quizName: this.getQuizName(),
     };
   }
 
