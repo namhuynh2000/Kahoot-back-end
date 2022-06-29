@@ -32,8 +32,8 @@ app.use(
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(logger("dev"));
-app.use(express.static(path.join(__dirname, "public")));
 app.use("/server", serverRouter);
+app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -46,19 +46,6 @@ io.on("connection", (socket) => {
   hostHandle(io, socket);
   disconnectHandle(io, socket);
 });
-
-// main()
-//   .then((message) => {
-//     console.log(message);
-
-//     server.listen(port, () => {
-//       console.log(`socket is listening on: ${port}`);
-//     });
-//   })
-//   .catch((e) => {
-//     console.log(console.log(e));
-//     server.close();
-//   });
 
 if (checkConnect) {
   server.listen(port, () => {

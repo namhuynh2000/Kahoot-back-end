@@ -15,11 +15,25 @@ const hostHandle = (io, socket) => {
 
   const createGame = async (data) => {
     console.log(data);
+    const index = data.questions.findIndex((item) => item.imgPath);
+
+    data.imgPath =
+      index !== -1
+        ? data.questions[index].imgPath
+        : `${process.env.BACK_END_URL}/images/noImage.jpg`;
     const result = await quizModel.addQuizToDB(data);
 
     if (result)
       io.to(socket.id).emit("createGameResult", { message: "success" });
     else io.to(socket.id).emit("createGameResult", { message: "error" });
+  };
+
+  const deleteQuiz = async (quizId) => {
+    const result = await quizModel.removeQuizFromDB(quizId);
+
+    if (result)
+      io.to(socket.id).emit("deleteQuizResult", { message: "success" });
+    else io.to(socket.id).emit("deleteQuizResult", { message: "error" });
   };
 
   // Host game
@@ -162,6 +176,7 @@ const hostHandle = (io, socket) => {
 
   socket.on("hostGame", hostGame);
   socket.on("createGame", createGame);
+  socket.on("deleteQuiz", deleteQuiz);
   socket.on("fetchQuizList", fetchQuizList);
   socket.on("fetchPlayersInRoom", sendAllPlayersInfoInRoom);
   socket.on("startGame", startGame);

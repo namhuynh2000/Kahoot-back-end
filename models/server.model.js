@@ -20,4 +20,8 @@ export default {
   addQuizToDB: async (data) => {
     return await quizModel.create(data);
   },
+
+  removeQuizFromDB: async (id) => {
+    return await quizModel.remove({ _id: id });
+  },
 };
