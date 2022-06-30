@@ -13,6 +13,27 @@ const hostHandle = (io, socket) => {
     io.to(socket.id).emit("fetchQuizListRes", list);
   };
 
+  const getQuiz = async (quizId) => {
+    console.log(quizId);
+    const quiz = await quizModel.getGameFromDB(quizId);
+
+    if (quiz)
+      io.to(socket.id).emit("getQuizResult", { msg: "success", data: quiz });
+    else {
+      io.to(socket.id).emit("getQuizResult", { msg: "error", data: quiz });
+    }
+  };
+
+  const updateQuiz = async (quizId, quizData) => {
+    const result = await quizModel.updateQuiz(quizId, quizData);
+
+    if (result)
+      io.to(socket.id).emit("updateQuizResult", { message: "success" });
+    else {
+      io.to(socket.id).emit("updateQuizResult", { message: "error" });
+    }
+  };
+
   const createGame = async (data) => {
     console.log(data);
     const index = data.questions.findIndex((item) => item.imgPath);
@@ -186,6 +207,8 @@ const hostHandle = (io, socket) => {
   socket.on("getRankList", getRankList);
   socket.on("getSummaryRankList", getSummaryRankList);
   socket.on("disconnect", hostDisconnect);
+  socket.on("getQuiz", getQuiz);
+  socket.on("updateQuiz", updateQuiz);
 };
 
 export default hostHandle;

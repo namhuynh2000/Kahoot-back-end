@@ -24,4 +24,10 @@ export default {
   removeQuizFromDB: async (id) => {
     return await quizModel.remove({ _id: id });
   },
+
+  updateQuiz: async (id, data) => {
+    const result = await quizModel.findByIdAndUpdate(id, data);
+    console.log(result);
+    return "success";
+  },
 };
