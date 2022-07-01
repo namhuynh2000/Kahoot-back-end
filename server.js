@@ -48,7 +48,8 @@ io.on("connection", (socket) => {
 });
 
 if (checkConnect) {
-  server.listen(process.env.PORT_SERVER || 3000, () => {
+  const port = process.env.PORT_SERVER || 3000;
+  server.listen(port, () => {
     console.log(`socket is listening on: ${port}`);
   });
 } else {
