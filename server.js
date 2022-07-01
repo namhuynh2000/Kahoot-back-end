@@ -18,6 +18,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
   },
 });
 const port = process.env.PORT || 8000;
@@ -27,6 +28,7 @@ const __dirname = path.dirname(__filename);
 app.use(
   cors({
     origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
 app.use(express.urlencoded({ extended: true }));

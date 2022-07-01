@@ -1,4 +1,4 @@
-import Game from "../../utils/class/game.js";
+import Game from "../../utils/class/Game.js";
 import gameManager from "../../utils/class/GameManager.js";
 import quizModel from "../../models/server.model.js";
 
