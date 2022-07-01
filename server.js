@@ -20,7 +20,7 @@ const io = new Server(server, {
     origin: "*",
   },
 });
-
+const port = process.env.PORT || 8000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -48,7 +48,7 @@ io.on("connection", (socket) => {
 });
 
 if (checkConnect) {
-  server.listen(process.env.PORT_SERVER || 3000, () => {
+  server.listen(port, () => {
     console.log(`socket is listening on: ${port}`);
   });
 } else {
