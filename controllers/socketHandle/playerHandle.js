@@ -44,13 +44,14 @@ const playerHandle = (io, socket) => {
     }
   };
 
-  const answer = (playerId, questionId, answerContent) => {
+  const answer = (playerId, questionId, answerContent,index) => {
     const game = gameManager.getGameWithPlayer(playerId);
     if (game) {
       const newList = game.updatePlayerAnswer(
         playerId,
         questionId,
-        answerContent
+        answerContent,
+        index
       );
 
       const playerInfo = game.getPlayer(playerId);

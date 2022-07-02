@@ -62,7 +62,7 @@ class Game {
     return this.data.name;
   }
 
-  updatePlayerAnswer(playerId, questionId, answer) {
+  updatePlayerAnswer(playerId, questionId, answer,index) {
     const question = this.data.questions.find((ques) => {
       return ques.id === questionId;
     });
@@ -74,7 +74,7 @@ class Game {
       //  Update number of player has answer the question
       this.answers.forEach((ans) => {
         if (ans.id === questionId)
-          ans.playerAnswers.push({ player: playerId, answer });
+          ans.playerAnswers.push({ player: playerId, answer,index });
       });
 
       // Check if player answer right
