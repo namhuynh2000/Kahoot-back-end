@@ -13,6 +13,23 @@ const playerHandle = (io, socket) => {
         name: payload.name,
         score: 0,
       };
+
+      if (game.havePlayer(player.id)) {
+        socket.emit("joinRoomRes", {
+          result: false,
+          msg: "You are already in the room",
+        });
+        return;
+      }
+
+      if (game.havePlayerName(player.name)) {
+        socket.emit("joinRoomRes", {
+          result: false,
+          msg: "This name is already taken",
+        });
+        return;
+      }
+
       game.addPlayerToGame(player);
 
       socket.join(room);
@@ -31,7 +48,7 @@ const playerHandle = (io, socket) => {
     } else {
       io.to(socket.id).emit("joinRoomRes", {
         result: false,
-        msg: "Joined failed",
+        msg: "Room not found",
       });
     }
   };
@@ -44,7 +61,7 @@ const playerHandle = (io, socket) => {
     }
   };
 
-  const answer = (playerId, questionId, answerContent,index) => {
+  const answer = (playerId, questionId, answerContent, index) => {
     const game = gameManager.getGameWithPlayer(playerId);
     if (game) {
       const newList = game.updatePlayerAnswer(

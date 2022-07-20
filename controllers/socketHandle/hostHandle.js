@@ -195,6 +195,16 @@ const hostHandle = (io, socket) => {
     }
   };
 
+  const removePlayer = (playerName) => {
+    const game = gameManager.getGameWithHost(socket.id);
+    if (game) {
+      const removePlayerId = game.removePlayerByName(playerName);
+      const playersInRoom = game.getPlayersInGame();
+      io.to(socket.id).emit("receive__players", playersInRoom);
+      io.to(removePlayerId).emit("playerRemoveOutOfRoom");
+    }
+  };
+
   socket.on("hostGame", hostGame);
   socket.on("createGame", createGame);
   socket.on("deleteQuiz", deleteQuiz);
@@ -209,6 +219,7 @@ const hostHandle = (io, socket) => {
   socket.on("disconnect", hostDisconnect);
   socket.on("getQuiz", getQuiz);
   socket.on("updateQuiz", updateQuiz);
+  socket.on("removePlayer", removePlayer);
 };
 
 export default hostHandle;
